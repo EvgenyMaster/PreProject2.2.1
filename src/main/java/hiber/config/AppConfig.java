@@ -1,6 +1,5 @@
 package hiber.config;
 
-import hiber.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,13 +9,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Objects;
 import java.util.Properties;
-
+//TODO а 45 строке put hibernate_dialect описывал вручную, без нее говорило. hibernate.dialect is null
 
 @Configuration
 @PropertySource("classpath:db.properties")
@@ -44,12 +42,13 @@ public class AppConfig {
       factoryBean.setDataSource(getDataSource());
 
       Properties props=new Properties();
-      props.put("hibernate.dialect", env.getProperty("db.dialect"));//TODO эту хуету дописал я , без нее говорило. hibernate.dialect null
+      props.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
       props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
       props.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
 
+      factoryBean.setDataSource(getDataSource());
       factoryBean.setHibernateProperties(props);
-      factoryBean.setAnnotatedClasses(User.class);
+      factoryBean.setPackagesToScan("hiber.model");
       return factoryBean;
    }
 

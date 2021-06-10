@@ -14,7 +14,7 @@ public class UserDaoImp implements UserDao {
     private SessionFactory sessionFactory;
 
     @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory){
+    public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -30,5 +30,17 @@ public class UserDaoImp implements UserDao {
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("select e from User e");
         return (List<User>) query.getResultList();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public User findOwner(String car_name, int car_series) {
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("select e from User e where e.car.model = :car_name and e.car.series = :car_series")
+                .setParameter("car_name", car_name)
+                .setParameter("car_series", car_series);
+        List<User> userList = query.getResultList();
+
+        return userList.stream().findAny().orElse(null);
     }
 }
